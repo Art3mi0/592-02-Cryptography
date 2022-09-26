@@ -1,3 +1,10 @@
+"""
+Author  - Temo Meza
+Course  - CSC-592-02
+Date    - 9/26/2022
+Purpose - Assignment 1
+"""
+
 import random
 
 """
@@ -98,80 +105,105 @@ def decrypt(key, cipher):
     return message
 
 
-def start(again):
-    if not again:
-        print("This program will encrypt a html file using Vigenere Cipher")
-        print("This program will generate 1 txt file and 2 html files")
-        print("In order for the program to work, ensure the html file"
-              "that is being encrypted is located in the same folder "
-              "as this program")
+"""
+input   -   None
+output  -   None
+purpose -   The method for taking in and checking an input from the user.
+            This method is separate from main because I was gonna have 
+            the program start over but no longer feel like implementing
+            that.
+"""
+def start():
+    # Instructions
+    print("This program will encrypt a html file using Vigenere Cipher")
+    print("This program will generate 1 txt file and 2 html files")
+    print("In order for the program to work, ensure the html file"
+          "that is being encrypted is located in the same folder "
+          "as this program")
+    print()
 
     flag = False
-    while flag:
-        filePath = input("Enter the name of the html file (Without the \".html\" end)") + ".html"
+    filePath = ""
+    while not flag:
+        filePath = input("Enter the name of the html file (Without the \".html\" end): ")
         try:
-            test = open(filePath, "r")
-            flag = True
+            filePath += ".html"         # A loop asking for a user's file
+            test = open(filePath, "r")  # and repeats until the user inputs
+            flag = True                 # one that exists
             test.close()
         except:
             print("ERROR: File missing or does not exist")
 
     length = ""
-    while length.isdigit():
-        length = input("Enter desired length of key")
-        if length.isdigit():
-            if int(length) <= 1:
+    while not length.isdigit():
+        length = input("Enter desired length of key: ")
+        if length.isdigit():        # A loop for accepting a valid
+            if int(length) <= 1:    # length from the user
                 length = ""
                 print("ERROR: integer can not be 1 or less")
         else:
             print("ERROR: integer not entered")
 
-    generateFiles(filePath, length)
+    generateFiles(filePath, int(length))    # A separate method in case I wanted the program to
+                                            # start over. I think keeping everything together would
+                                            # have resulted in a recusrsion error.
 
-
-
+"""
+input   -   String, String
+output  -   None
+purpose -   This method generates 3 files depending on the inputs
+            from the start method
+"""
 def generateFiles(file, length):
-    fileText = ""
-    with open(file, "r") as testFile:
-        line = testFile.readline()
-        while line != '':
-            fileText += line
-            line = testFile.readline()
-    fileKey = keyGenerator(8)
+    print("Generating key file...")
+    tempKey = keyGenerator(length)
+    keyFile = open("key.html", "w")     # Key file generation
+    for j in tempKey:
+        keyFile.write(j)
+    keyFile.close()
 
-def main():
+    print("Generating encoded html file...")
+
     fileText = ""
-    with open("HTML File Extension - What is an .html file and how do I open it_.html", "r") as testFile:
-        line = testFile.readline()
-        while line != '':
+    with open(file, "r") as tempFile:   # Putting everything from the
+        line = tempFile.readline()      # html file into a single
+        while line != '':               # python string object
             fileText += line
-            line = testFile.readline()
-    fileKey = keyGenerator(8)
+            line = tempFile.readline()
+
+    fileKey = ""
+    with open("key.html", "r") as tempFile: # Reading the generated key
+        line = tempFile.readline()          # file
+        while line != '':
+            fileKey += line
+            line = tempFile.readline()
 
     fileEncrypt = encrypt(fileKey, fileText)
-
-    encryptFile = open("encrypt.html", "w")
-    for j in fileEncrypt:
-        try:
-            encryptFile.write(j)
-        except:
-            print("Writing to encrypted file error: couldnt write \"" + j + "\" with ord " + str(ord(j)))
-            encryptFile.write(str(j.encode("utf-8")))
+    encryptFileName = file[:-5] + "_end.html"
+    encryptFile = open(encryptFileName, "w")    # Generating the encrypted
+    for j in fileEncrypt:                       # file
+        encryptFile.write(j)
     encryptFile.close()
 
     encryptText = ""
-    with open("encrypt.html", "r") as readFile:
-        line = readFile.readline()
-        while line != '':
-            encryptText += line
+    with open(encryptFileName, "r") as readFile:    # Reading the encrypted
+        line = readFile.readline()                  # file and placing
+        while line != '':                           # everything into a
+            encryptText += line                     # string object
             line = readFile.readline()
 
+    print("Generating decrytpted file...")
     fileDecryptText = decrypt(fileKey, encryptText)
-
-    decryptFile = open("decrypt.html", "w")
-    for j in fileDecryptText:
+    decryptFileName = file[:-5] + "_dec.html"
+    decryptFile = open(decryptFileName, "w")    # Generating the decrypted
+    for j in fileDecryptText:                   # file
         decryptFile.write(j)
     decryptFile.close()
+    print("done")
+
+
+def main():
+    start()
 
 
 main()
