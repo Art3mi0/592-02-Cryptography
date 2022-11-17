@@ -2,12 +2,18 @@ import os
 import base64
 
 def main():
-    # Vault setup
-    userToken = input("enter your server root token: ")
-    os.environ["VAULT_ADDR"] = "http://127.0.0.1:8200"
-    os.environ["VAULT_TOKEN"] = userToken
-    os.system("vault secrets enable transit")
-    os.system("vault write transit/keys/aesKey type=aes256-gcm96")
+    # Vault setup with error handling
+    flag = True
+    while flag:
+        userToken = input("Enter your server root token: ")
+        os.environ["VAULT_ADDR"] = "http://127.0.0.1:8200"
+        os.environ["VAULT_TOKEN"] = userToken
+        os.system("vault secrets enable transit")
+        check = os.system("vault write transit/keys/aesKey type=aes256-gcm96")
+        if check == 0:
+            flag = False
+        else:
+            print("The root token was incorrect")
 
     # Encoding user message to base64, then encoding with vault
     userText = input("Enter message to encrypt: ")
