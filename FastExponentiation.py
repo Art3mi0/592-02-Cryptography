@@ -35,11 +35,11 @@ expMod(17, 22, 21)
 
 # Test I used to ensure my function worked
 # It matches the python calculations
-for i in range(10):
-    x = random.randint(15, 50)
-    e = random.randint(15, 50)
-    n = random.randint(15, 50)
-    print("x =", x, "e =", e, "n =", n)
-    print("Calculated answer =", (x**e) % n)
-    expMod(x, e, n)
-    print()
+# for i in range(10):
+#     x = random.randint(15, 50)
+#     e = random.randint(15, 50)
+#     n = random.randint(15, 50)
+#     print("x =", x, "e =", e, "n =", n)
+#     print("Calculated answer =", (x**e) % n)
+#     expMod(x, e, n)
+#     print()
